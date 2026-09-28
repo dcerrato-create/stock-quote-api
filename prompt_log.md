@@ -48,3 +48,28 @@
 > From now on don't ask me to run commands. Run every command yourself: installs, tests, curl, git, and gh. Only stop and ask me when something truly needs me: a browser login, pasting my key into .env, or a click in a website dashboard. ... If you havent found my finnhub key yet here it is: [key removed]
 
 **What it shaped:** Claude wrote the key into `.env` (which is gitignored), ran the local curl tests itself (200 for AAPL, 400 for an empty ticker, 404 for a fake one, plus a CORS check), and walked me through the one-time `gh` browser login.
+
+### 4. Upgrading to a portfolio-worthy version
+
+> Upgrade the stock lookup to be portfolio-worthy while keeping it simple, using Finnhub only.
+>
+> Backend (stock-quote-api):
+> - Keep POST /quote. Have it also call Finnhub's free /stock/profile2 and /stock/metric?metric=all endpoints.
+> - Return JSON: ticker, company name, logo URL, price, change, change_percent, open, high, low, previous close, 52-week high/low, P/E and market cap.
+> - Keep the existing error handling. If profile or metrics fail, still return the quote.
+> - Add a new endpoint GET /search?q=<text> that calls Finnhub's /search endpoint and returns up to 6 matches as JSON: [{symbol, name}]. Only include US common stocks (skip symbols containing a "."). Return an empty list for empty input, and a JSON error if Finnhub fails.
+> - Update README.md with both endpoints and their new response fields. Near the top, add: "This project follows the 'fetch data from an API that requires authentication' pattern: ..."
+> - Add this prompt to prompt_log.md.
+>
+> Frontend (stock-lookup/index.html):
+> - Title: "David's Stock Lookup"
+> - Match my portfolio's look by reading the portfolio's CSS and reusing its fonts, colors and spacing.
+> - Autocomplete: as the user types a ticker or company name (e.g. "AP" or "apple"), call /search, waiting about 300ms after they stop typing so it doesn't call on every keystroke. Show a dropdown of "AAPL — Apple Inc." style suggestions. Clicking one, or using the arrow keys plus Enter, fills the input and runs the quote. If there are no matches, show "No matches."
+> - A result card with the logo and company name, a large price, the $/% change in green or red, and a small grid of the day stats and key metrics.
+> - Quick-pick buttons: AAPL, NVDA, MSFT, TSLA
+> - Keep the loading message ("waking up server…") and friendly errors.
+> - Don't add charts or anything that needs a database.
+>
+> Run everything yourself and test locally: autocomplete with "AP" and "apple", a quote, an empty input, a fake ticker, and the backend being down. Don't push the portfolio yet.
+
+**What it shaped:** `/quote` now makes one required Finnhub call (quote) and two optional ones (profile, metrics) that fail softly. The new `/search` endpoint filters to US common stocks. The frontend reuses the portfolio's design tokens (Inter, near-black background, Honduran-blue accent, pill buttons) and adds a debounced, keyboard-accessible autocomplete. Claude tested every case above with curl, and with an automated Chrome run using Playwright, before deploying.
