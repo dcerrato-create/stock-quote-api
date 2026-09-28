@@ -2,7 +2,7 @@
 
 **AI tool used:** Claude Code (VS Code extension), model Claude Opus 5.5 (high effort)
 
-This log lists every prompt that led to code or repository changes, word for word, in the order I gave them. Purely conversational questions are left out. My Finnhub API key, which I pasted in one prompt, is replaced with [key removed].
+This log lists every prompt that led to code or repository changes, word for word, in the order I gave them. Purely conversational questions are left out. Many more prompts were used, especially conversational ones, but these are the true key prompts that were essential to the lookup tool. 
 
 ---
 
