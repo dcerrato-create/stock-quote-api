@@ -2,7 +2,7 @@
 
 A small Flask backend that looks up the current price of a stock. It calls the [Finnhub](https://finnhub.io) quote API on the server, so the Finnhub API key never reaches the browser.
 
-- **Backend (Render):** https://stock-quote-api.onrender.com *(update once deployed)*
+- **Backend (Render):** https://stock-quote-api-t5yy.onrender.com
 - **Frontend:** https://dcerrato-create.github.io/Personal-Website-Portfolio/stock-lookup/
 - **Frontend repo:** https://github.com/dcerrato-create/Personal-Website-Portfolio
 
