@@ -1,0 +1,14 @@
+# Secrets
+.env
+
+# Course files
+HW4_instructions.pdf
+
+# Python cache / virtualenv
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# macOS
+.DS_Store
