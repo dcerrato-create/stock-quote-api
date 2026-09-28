@@ -20,4 +20,5 @@ Clone the repo, create a Python virtual environment and install the packages lis
 
 The Finnhub key exists only on the backend: in a local .env file that git ignores, and as an environment variable on Render. The browser only ever talks to this backend, never to Finnhub directly, so the key never appears in the frontend code or in any response.
 
-The prompts used to build this project are in prompt_log.md.
+
+
