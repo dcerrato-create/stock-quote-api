@@ -101,6 +101,22 @@ def upstream_error(exc, service):
     return jsonify({"error": f"Could not reach the {service}."}), 502
 
 
+@app.route("/", methods=["GET"])
+def index():
+    """Opening the base URL in a browser shows that the API is up and how to use it."""
+    return jsonify(
+        {
+            "service": "Stock Quote API",
+            "status": "running",
+            "endpoints": {
+                "POST /quote": 'JSON body like {"ticker": "AAPL"}; returns a live quote, company info and key metrics',
+                "GET /search?q=apple": "returns up to 6 matching US stocks, ADRs and ETFs",
+            },
+            "frontend": "https://dcerrato-create.github.io/Personal-Website-Portfolio/stock-lookup/",
+        }
+    )
+
+
 # Every response is JSON, even for unknown routes, wrong methods or crashes
 @app.errorhandler(404)
 def not_found(_):

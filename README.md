@@ -6,7 +6,7 @@ Live backend: https://stock-quote-api-t5yy.onrender.com. Live page: https://dcer
 
 ## What the backend does
 
-The backend has two endpoints. POST /quote takes a JSON body with a ticker. It returns that stock's price, daily change, company name and logo, day stats, 52-week range, P/E ratio and market cap, plus short notes explaining any number it had to hide. GET /search takes a q parameter containing part of a ticker or company name, and returns up to six matching US stocks, ADRs and ETFs, each labeled Stock or ETF. Errors also come back as JSON with a readable message: an empty or unknown ticker, an index (the message points you to an ETF that tracks it), or the data provider being unavailable.
+The backend has two endpoints. POST /quote takes a JSON body with a ticker. It returns that stock's price, daily change, company name and logo, day stats, 52-week range, P/E ratio and market cap, plus short notes explaining any number it had to hide. GET /search takes a q parameter containing part of a ticker or company name, and returns up to six matching US stocks, ADRs and ETFs, each labeled Stock or ETF. Errors also come back as JSON with a readable message: an empty or unknown ticker, an index (the message points you to an ETF that tracks it), or the data provider being unavailable. Opening the base URL in a browser shows a short summary confirming the API is running.
 
 ## How the frontend communicates with the backend
 
