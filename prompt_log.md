@@ -1,6 +1,6 @@
 # Prompt Log
 
-**AI tool used:** Claude Code (VS Code extension), model Claude Opus 5.5
+**AI tool used:** Claude Code (VS Code extension), model Claude Opus 5.5 (high effort)
 
 ## Key prompts
 
@@ -73,3 +73,76 @@
 > Run everything yourself and test locally: autocomplete with "AP" and "apple", a quote, an empty input, a fake ticker, and the backend being down. Don't push the portfolio yet.
 
 **What it shaped:** `/quote` now makes one required Finnhub call (quote) and two optional ones (profile, metrics) that fail softly. The new `/search` endpoint filters to US common stocks. The frontend reuses the portfolio's design tokens (Inter, near-black background, Honduran-blue accent, pill buttons) and adds a debounced, keyboard-accessible autocomplete. Claude tested every case above with curl, and with an automated Chrome run using Playwright, before deploying.
+
+### 5. Berkshire Hathaway didn't work
+
+> From now on dont worry about changes in the README file and prompt log, We wil work on those at the end once everything is pushed into github ... I tried berkshire hathaway and it did not work. DIALOGUE ONLY, how can we make that work
+
+**What it shaped:** Claude explained that the "skip dotted symbols" rule was hiding share classes like BRK.A/BRK.B, and proposed allowing share-class tickers and accepting spellings like BRK-B.
+
+### 6. ETFs and indexes
+
+> WAIT, before changing, etfs and indexes dont work?
+
+**What it shaped:** Before changing anything, Claude checked Finnhub directly. ETFs had prices but were filtered out of search and had no company profile. Indexes (^GSPC) have no data on the free plan. BRK.B gets BRK.A's 52-week range.
+
+> Yes, do all three, quick modifications tho. At the very top make a note of what works and what does not, for example, US equities, ADRs, and ETFs work, indexes do not. AND only if you can, when people search up, create an indicator that lets them know if this is either an ETF or stock. For the indexes, I like your idea, do it that way. Go
+
+**What it shaped:**
+- ETFs and ADRs are included in search, with Stock/ETF badges on suggestions and the result card.
+- Index lookups get a message pointing to a tracking ETF (SPY/DIA/QQQ/IWM), and typing an index name suggests that ETF.
+- Share classes are supported, with the BRK-B spelling accepted.
+- A coverage note sits at the top of the page, and SPY was added to the quick picks.
+
+### 7. Edge cases and frontend-backend communication
+
+> The instruction say the following: "Focus on core functionality and clean communication between frontend and backend rather than UI polish." I believe our UI is functional enough, I just really want to make sure on the communication between backend and frontend. Can you make a last test for edgecases and make sure errors and handled adequately. For example, if we need to add a special note for the berkshire example edgecase. DONT worry about pushing yet ... THE SPY shows a stock badge when it clearly is a etf, and the etf search bar suggestions dont work
+
+**What it shaped:**
+- Claude found that the page was still talking to the old Render deploy, and that the frontend guessed "Stock" when no type was sent. Both were fixed.
+- The backend now sends `notes` that explain hidden numbers.
+- Every response is JSON, including 404/405/500. Input is validated, and Finnhub 429 and 401 errors get their own messages.
+- The frontend gained a 70 s timeout, ignores stale responses and validates replies.
+- About 60 automated checks: backend tests with simulated Finnhub failures, plus Playwright browser tests of odd replies, CORS blocking, timeouts and HTML injection.
+
+### 8. Foreign companies in search
+
+> voo works actually, why wouldnt toyota work?
+
+> yes do 1+2
+
+**What it shaped:** Finnhub's name search maps "toyota" to Tokyo's 7203.T, not the US ADR TM. Claude added:
+- a short verified list of well-known foreign companies mapped to their US tickers (toyota → TM, tsmc → TSM, ...), which still works when Finnhub is rate-limited
+- a clearer "No matches. Try the ticker instead" message
+
+### 9. Price time, penny stocks, ADR notes
+
+> Yes do that change for cheap stock, and modify the notes for ADR on why the 52 week info doesnt show up, mention that this is exclusive to ADR. Do that change of the time of the price, really good to change that.
+
+**What it shaped:**
+- An `as_of` field and an "As of Fri, Sep 25, 4:00 PM ET · change vs. previous close" line replace the misleading "today". OTC stocks show a date only.
+- Prices under $1 show up to 4 decimals.
+- ADRs are detected from Finnhub's non-USD currency. This also uncovered that ADR market caps were shown in yen or Taiwan dollars as if they were USD.
+
+> two final change, maybe we display the market cap simply change the symbol from dollar to the actual currency and add a separate note for ADR. Then I tested penny stock GGSM and it appears 0.00
+
+> why would that be wrong for those ADR's?
+
+> OK, you are right, do that final change for ADR, everything else looks good, but dont push yet
+
+**What it shaped:** Claude checked 11 ADRs and found that Finnhub's `currency` field is the filing currency: Alibaba, Baidu and PDD are labeled CNY while their market caps are in USD. ADR market caps are therefore hidden, with their own note, separate from the 52-week note. GGSM displayed correctly; the tab had been opened before the fix.
+
+### 10. Final edge-case sweep
+
+> CAN you make any final check for edgecases
+
+**What it shaped:** The sweep ran the backend under gunicorn (as on Render), scanned every response for the API key (found in none), and tested phone layout and double submits. It found and fixed three issues:
+- Mutual funds (a Finnhub 403) were reported as "API key rejected".
+- Queries with "+" (a Finnhub 422) showed a fake outage.
+- Accented names like "nestlé" didn't match the hints.
+
+### 11. Finish and push
+
+> Finish HW4 and push everything. Run every command yourself, only stop when a step truly needs my hands (a website click or login), and then give me one plain-English step at a time with no terminal commands. Re-read HW4_instructions.pdf and make sure everything below meets it. 1. Safety checks before any push ... 2. Push the backend ... 3. Deploy to Render ... 4. Push the frontend ... 5. Final verification ...
+
+**What it shaped:** Safety checks came first: `.env` and the PDF ignored and untracked, the key absent from every tracked file and all history in both repos, CORS verified for the GitHub Pages origin. Then the README was rewritten for the final API, this log was updated, the backend was pushed (Render auto-deploys) and tested live, `BACKEND_URL` was switched to Render, and the portfolio was pushed and verified on GitHub Pages.
