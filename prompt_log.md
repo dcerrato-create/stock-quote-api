@@ -37,4 +37,14 @@
 
 **What it shaped:** the whole architecture. A single `POST /quote` endpoint, the key kept server-side in an env var, explicit 400/404 JSON errors, port 5001, a separate frontend on GitHub Pages that calls the Render backend through CORS, and the security check before pushing.
 
-<!-- Add later prompts from this session below as they happen. -->
+### 2. Syncing the portfolio before adding the frontend
+
+> cant you do this? Previous conversations with claude code for previous assignments could edit my github, I dont want to mess up
+
+**What it shaped:** My local portfolio copy was 29 commits behind GitHub. Claude checked that nothing local would be lost, set my uncommitted edits aside with `git stash`, pulled, and only then added the Stock Lookup card to the Projects section.
+
+### 3. How we worked from then on
+
+> From now on don't ask me to run commands. Run every command yourself: installs, tests, curl, git, and gh. Only stop and ask me when something truly needs me: a browser login, pasting my key into .env, or a click in a website dashboard. ... If you havent found my finnhub key yet here it is: [key removed]
+
+**What it shaped:** Claude wrote the key into `.env` (which is gitignored), ran the local curl tests itself (200 for AAPL, 400 for an empty ticker, 404 for a fake one, plus a CORS check), and walked me through the one-time `gh` browser login.
